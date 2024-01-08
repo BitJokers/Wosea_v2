@@ -1,95 +1,109 @@
 from PySide6 import QtCore, QtWidgets, QtGui
+from PySide6.QtGui import QMouseEvent
 import time
-import resources
+import sys
+import images
 
 
 class MainWindow(QtWidgets.QWidget):
-    window_locked = False
+    # 窗口是否被锁定
+    window_locked = True
 
     def __init__(self):
-        """构造函数."""
+        """初始化窗口"""
         super().__init__()
         self.init_widget()
         self.init_tray_menu()
-
-        # 移动窗口至左上角并锁定
-        self.move(0, 0)
-        self.window_locked = True
-
-        # 创建计时器
+        # 创建定时器
         self.timer = QtCore.QTimer()
-        self.timer.start(500)
         self.timer.timeout.connect(self.update_time)
-
-        # 设置窗口属性
-        # 窗口透明度
+        self.timer.start(250)
+        # 配置窗口属性
         self.setWindowOpacity(0.8)
-        # 窗口标志(始终位于顶层,无边框,工具层)
-        self.setWindowFlags(QtCore.Qt.WindowType.WindowStaysOnTopHint
-                            | QtCore.Qt.WindowType.FramelessWindowHint
-                            | QtCore.Qt.WindowType.Tool)
+        self.setWindowFlags(
+            QtCore.Qt.WindowType.WindowStaysOnTopHint
+            | QtCore.Qt.WindowType.FramelessWindowHint
+            | QtCore.Qt.WindowType.Tool
+        )
 
     def init_widget(self):
-        """初始化控件."""
-        # 布局
-        self.layout = QtWidgets.QVBoxLayout(self)
-        # 控件
-        # 时间Label
+        """初始化窗口组件"""
+        # 时间显示label
         self.time_label = QtWidgets.QLabel(
-            "", self, alignment=QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.time_label.setFont(QtGui.QFont("Microsoft YaHei", 20))
-        # 添加控件
+            "", self, alignment=QtCore.Qt.AlignmentFlag.AlignCenter
+        )
+        self.time_label.setFont(QtGui.QFont("Microsoft YaHei", 18))
+        # 窗口布局管理
+        self.layout = QtWidgets.QVBoxLayout(self)
+        # 安装组件
         self.layout.addWidget(self.time_label)
 
     def init_tray_menu(self):
+        """初始化工具栏菜单"""
+        # 菜单栏图标
         self.tray = QtWidgets.QSystemTrayIcon(self)
-        self.tray.setIcon(QtGui.QIcon(":/logo/icon.png"))
+        self.tray.setIcon(QtGui.QIcon(":/icon.png"))
+        # 菜单
         self.tray_menu = QtWidgets.QMenu()
-        # TODO: 完成托盘菜单
+        self.addTrayMenuAction("退出", self.exit)
         self.tray.setContextMenu(self.tray_menu)
 
-    def mouseMoveEvent(self, event: QtGui.QMouseEvent):
-        """鼠标移动事件"""
+    def addTrayMenuAction(self, text, callback):
+        """添加托盘选项"""
+        action = QtGui.QAction(text, self)
+        action.triggered.connect(callback)
+        self.tray_menu.addAction(action)
+
+    def mouseMoveEvent(self, event: QMouseEvent):
+        """跟踪鼠标移动"""
+        # 如果窗口锁定就直接返回
         if self.window_locked:
             return
         if self._tracking:
             self._endPos = event.position().toPoint() - self._startPos
             self.move(self.pos() + self._endPos)
 
+    def mousePressEvent(self, event: QMouseEvent):
+        """跟踪鼠标按下"""
+        # 保存位置
+        if event.button() == QtCore.Qt.MouseButton.LeftButton:
+            self._startPos = QtCore.QPoint(event.position().x(), event.position().y())
+            self._tracking = True
+        # todo: 完成菜单显示
+
     def mouseReleaseEvent(self, event: QtGui.QMouseEvent):
-        """鼠标释放事件"""
+        """跟踪鼠标释放"""
         if event.button() == QtCore.Qt.MouseButton.LeftButton:
             self._tracking = False
             self._startPos = None
             self._endPos = None
 
-    def mousePressEvent(self, event: QtGui.QMouseEvent):
-        """鼠标按下事件"""
-        # 保存位置
-        if event.button() == QtCore.Qt.MouseButton.LeftButton:
-            self._startPos = QtCore.QPoint(event.position().x(),
-                                           event.position().y())
-            self._tracking = True
-        # 显示主菜单
-        # TODO: 完成菜单显示
-
-    def mouseDoubleClickEvent(self, event: QtGui.QMouseEvent):
+    def mouseDoubleClickEvent(self, _event: QMouseEvent):
         """双击窗口时锁定窗口"""
         self.window_locked = not self.window_locked
 
-    def show(self):
-        super().show()
-        self.tray.show()
-
+    @QtCore.Slot()
     def update_time(self):
-        self.time_label.setText(time.strftime("%H:%M:%S"))
+        """更新时间"""
+        self.time_label.setText(str(time.strftime("%H:%M:%S")))
+
+    def show(self):
+        """显示主窗口以及托盘图标"""
+        self.tray.show()
+        self.move(0, 0)
+        super().show()
+
+    def exit(self):
+        self.close()
+        self.destroy()
+        sys.exit()
 
 
 def main():
-    app = QtWidgets.QApplication()
+    app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
     window.show()
-    app.exec()
+    sys.exit(app.exec())
 
 
 if __name__ == "__main__":
