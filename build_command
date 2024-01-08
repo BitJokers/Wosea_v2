@@ -8,6 +8,7 @@ pip install -r requirements_build.txt
 pyside6-rcc.exe images/images.qrc -o src/images.py
 :: 编译程序
 python -m nuitka --standalone --disable-console --enable-plugins=pyside6 src/wosea.py
+python -m nuitka --standalone --disable-consolesrc/launcher.py
 :: 保存输出
 mkdir output
 mv wosea.dist/* output/
