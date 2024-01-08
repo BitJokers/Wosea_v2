@@ -5,7 +5,7 @@
 <img alt="GitHub License" src="https://img.shields.io/github/license/BitJokers/wosea_v2">
 </p>
 
-![wosea_v2](https://socialify.git.ci/bitjokers/wosea_v2/image?issues=1&language=1&logo=https%3A%2F%2Fraw.githubusercontent.com%2FBitJokers%2FWosea_v2%2Fmaster%2Fresources%2Fimages%2Ficon.svg&name=1&owner=1&pattern=Solid&pulls=1&stargazers=1&theme=Light)
+![wosea_v2](https://socialify.git.ci/bitjokers/wosea_v2/image?issues=1&language=1&logo=https%3A%2F%2Fgithub.com%2FBitJokers%2FWosea_v2%2Fblob%2F4a31afe3ba0dd349422adf710caa7af7a12002dd%2Fimages%2Ficon.svg&name=1&owner=1&pattern=Solid&pulls=1&stargazers=1&theme=Light)
 **Wosea_v2**是[Wosea](https://github.com/bitjokers/Wosea)的第二个版本,我们准备重构整个项目,所以归档了原项目.<br/>
 此软件的功能都用于教室的一体机上,是一个方便老师上课使用以及学生整活的小工具.
 
