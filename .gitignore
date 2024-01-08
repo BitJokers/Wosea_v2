@@ -1,3 +1,6 @@
 venv/
 output/
 src/__pycache__/
+*.dist/
+*.build/
+dev_remote_path.txt
