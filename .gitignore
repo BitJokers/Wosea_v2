@@ -1,5 +1,4 @@
 venv/
-output/
 src/__pycache__/
 *.dist/
 *.build/
